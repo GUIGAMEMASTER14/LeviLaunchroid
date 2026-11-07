@@ -1,0 +1,36 @@
+
+name: Build LeviLauncher Mod
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Preparar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar NDK
+        shell: pwsh
+        run: sdkmanager "ndk;28.2.13676358"
+
+      - name: Compilar mod
+        shell: pwsh
+        run: .\examples\full-cpp-mod\build.ps1
+
+      - name: Salvar arquivo compilado
+        uses: actions/upload-artifact@v4
+        with:
+          name: LeviPack-ARM64
+          path: examples/full-cpp-mod/**/*.levipack
+          
